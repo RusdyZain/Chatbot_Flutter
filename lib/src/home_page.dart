@@ -26,12 +26,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
-  void startListening() async {
+  Future<void> startListening() async {
     await speechToText.listen(onResult: onSpeechResult);
     setState(() {});
   }
 
-  void stopListening() async {
+  Future<void> stopListening() async {
     await speechToText.stop();
     setState(() {});
   }
@@ -164,8 +164,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Pallete.firstSuggestionBoxColor,
         onPressed: () async {
           if (await speechToText.hasPermission && speechToText.isNotListening) {
-            startListening();
-          } else if (speechToText.isListening) {}
+            await startListening();
+          } else if (speechToText.isListening) {
+            await stopListening();
+          } else {
+            initSpeechToText();
+          }
         },
         child: Icon(
           Icons.mic,
