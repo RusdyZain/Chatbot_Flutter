@@ -1,3 +1,4 @@
+import 'package:chatbot_flutter/api/openai_service.dart';
 import 'package:chatbot_flutter/widget/feature_box.dart';
 import 'package:chatbot_flutter/widget/pallete.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final speechToText = SpeechToText();
   String lastWords = '';
+  final OpenAIService openAIService = OpenAIService();
 
   @override
   void initState() {
@@ -166,6 +168,8 @@ class _HomePageState extends State<HomePage> {
           if (await speechToText.hasPermission && speechToText.isNotListening) {
             await startListening();
           } else if (speechToText.isListening) {
+            final speech = openAIService.isArtPromptAPI(lastWords);
+            print(speech);
             await stopListening();
           } else {
             initSpeechToText();
