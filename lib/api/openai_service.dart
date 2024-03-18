@@ -5,35 +5,36 @@ import 'package:http/http.dart' as http;
 class Secret {
   final String apiKey;
   Secret({this.apiKey = ""});
+
   factory Secret.fromJson(Map<String, dynamic> jsonMap) {
     return new Secret(apiKey: jsonMap["openAPIKEY"]);
   }
 }
 
 class SecretLoader {
-  final String secretPath;
+  final String secretPath = "api.json";
 
-  SecretLoader({required this.secretPath});
-  Future<Secret> load() {
-    return rootBundle.loadStructuredData<Secret>(this.secretPath,
-        (jsonStr) async {
-      final secret = Secret.fromJson(json.decode(jsonStr));
-      return secret;
-    });
+  Future<Secret> load() async {
+    String jsonString = await rootBundle.loadString(secretPath);
+    final secret = Secret.fromJson(jsonDecode(jsonString));
+    return secret;
   }
 }
 
 class OpenAIService {
   final List<Map<String, String>> message = [];
-  Future<Secret> openAPIKEY = SecretLoader(secretPath: "api.json").load();
+  Future<Secret> openAPIKEY = SecretLoader().load();
 
   Future<String> isArtPromptAPI(String prompt) async {
     try {
+      final secret = await openAPIKEY;
+      final apiKey = secret.apiKey;
+
       final res = await http.post(
         Uri.parse("https://api.openai.com/v1/chat/completions"),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $openAPIKEY"
+          "Authorization": "Bearer $apiKey"
         },
         body: jsonEncode(
           {
