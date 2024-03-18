@@ -46,4 +46,4 @@ app.*.map.json
 *.env
 
 # Hide key from version control
-/lib/api/api.json
+api.json
