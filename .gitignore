@@ -42,5 +42,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Hide key from version control
-/lib/api/api.dart
+# exclude all .env files from source control
+*.env
