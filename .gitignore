@@ -44,3 +44,6 @@ app.*.map.json
 
 # exclude all .env files from source control
 *.env
+
+# Hide key from version control
+/lib/api/api.json

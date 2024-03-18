@@ -1,9 +1,31 @@
 import 'dart:convert';
-import 'package:chatbot_flutter/api/api.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+
+class Secret {
+  final String apiKey;
+  Secret({this.apiKey = ""});
+  factory Secret.fromJson(Map<String, dynamic> jsonMap) {
+    return new Secret(apiKey: jsonMap["api_key"]);
+  }
+}
+
+class SecretLoader {
+  final String secretPath;
+
+  SecretLoader({required this.secretPath});
+  Future<Secret> load() {
+    return rootBundle.loadStructuredData<Secret>(this.secretPath,
+        (jsonStr) async {
+      final secret = Secret.fromJson(json.decode(jsonStr));
+      return secret;
+    });
+  }
+}
 
 class OpenAIService {
   final List<Map<String, String>> message = [];
+  Future<Secret> openAPIKEY = SecretLoader(secretPath: "api.json").load();
 
   Future<String> isArtPromptAPI(String prompt) async {
     try {
