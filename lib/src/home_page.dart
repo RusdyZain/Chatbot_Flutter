@@ -2,6 +2,7 @@ import 'package:chatbot_flutter/api/openai_service.dart';
 import 'package:chatbot_flutter/widget/feature_box.dart';
 import 'package:chatbot_flutter/widget/pallete.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -14,6 +15,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final speechToText = SpeechToText();
+  final flutterTts = FlutterTts();
+
   String lastWords = '';
   final OpenAIService openAIService = OpenAIService();
 
@@ -21,6 +24,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     initSpeechToText();
+    initTextToSpeech();
+  }
+
+  Future<void> initTextToSpeech() async {
+    setState(() {});
   }
 
   Future<void> initSpeechToText() async {
@@ -46,10 +54,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> systemSpeak(String content) async {
+    await flutterTts.speak(content);
+  }
+
   @override
   void dispose() {
     super.dispose();
     speechToText.stop();
+    flutterTts.stop();
   }
 
   @override
@@ -136,6 +149,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            
             // Features List Chat
             Column(
               children: [
@@ -169,7 +183,7 @@ class _HomePageState extends State<HomePage> {
             await startListening();
           } else if (speechToText.isListening) {
             final speech = openAIService.isArtPromptAPI(lastWords);
-            print(speech);
+            await systemSpeak(speech as String);
             await stopListening();
           } else {
             initSpeechToText();
