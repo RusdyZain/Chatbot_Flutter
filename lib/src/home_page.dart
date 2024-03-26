@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            
+
             // Features List Chat
             Column(
               children: [
@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
             await startListening();
           } else if (speechToText.isListening) {
             final speech = openAIService.isArtPromptAPI(lastWords);
-            await systemSpeak(speech as String);
+            systemSpeak(await speech);
             await stopListening();
           } else {
             initSpeechToText();
